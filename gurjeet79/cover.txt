@@ -1,0 +1,33 @@
+Dear Sir/Madam,
+
+    I am currently working with an organization that is developing
+its own RDBMS with its own Kernel and the Finite State Automata,
+implemented purely in "C".
+
+    I am currently involved in implementing the 'Extended Procedural Language'
+support to the database server, being implemented in C. I have worked
+as a team member of 'ODBC Driver' and the Parser teams for breif
+periods, these too are being implemented in C.
+
+    Implemented the Windows-NT service for the database server, single
+handedly, in C.
+
+    In short, I have lived life C-style for the last 18 months, and
+craving for more. And I consider myself to be quite a wiz with this
+raw language. And I know quite a bit of assembly language too ( just
+enough to understand what my C code is being converted into...) .
+
+    I have also seen the LCC(the C compiler)'s code and am in posession
+of 'Micro Controller (real-time)Operating System'(uC-OS)'s code.
+
+    I want to delve further into the Embedded Systems field, and I
+consider myself to be equipped to dive into this vast and varied field.
+
+    So it is with great enthusiasm that I am attaching my resume for your
+kind consideration.
+
+Gurjeet Singh.
+
+P.S : You can view my current resume at
+http://www.geocities.com/gurjeet79/Resume.html
+

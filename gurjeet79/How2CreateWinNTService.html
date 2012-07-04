@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<!-- ARCHIVE by GEOCITIES.WS -->
+<head>
+	<title>How to create a Windows NT Service</title>
+</head>
+<body><script type="text/javascript" src="/js/policy.js"></script>
+<script type="text/javascript">
+
+window.onload=function(){
+html = document.body.innerHTML;
+
+checkPolicy(html);
+}
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-26341965-1']);
+  _gaq.push(['_setDomainName', '.geocities.ws']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<!-- following code added by server. PLEASE REMOVE -->
+<!-- preceding code added by server. PLEASE REMOVE -->
+
+<H1>How to create a Windows NT Service</H1>
+
+<p>
+There are a lot of samples on the net that explain how to write a basic Windows NT Service. This is just another one of them. However, there are some differences:
+<br>- This one is written by me (duh... :).
+<br>- It has a lot of comments; which obviate the need of a saparate document explaining how a typical WinNT Service is supposed to work. However, you need to know the architecture of Windows NT Service to understand it. (I'll try to put together a document that explains it.)
+<br>
+<br> I know I still need to explain a lot of things, but, for now, this much should suffice...
+<br>
+<br>
+So, here it goes...
+</p>
+
+<pre>
+&lt;code&gt;
+#include &lt;windows.h&gt;
+#include &lt;tchar.h&gt;
+#include &lt;stdio.h&gt;
+
+static TCHAR* ServiceName = TEXT("Beeper");
+static SERVICE_STATUS ServiceStatus;
+static SERVICE_STATUS_HANDLE hServiceStatus = 0;
+static HANDLE evStopService = 0;
+
+<font color="green">/******************************************************************************
+ * This functioon is called by the OS to notify a running service of
+ * it's intentions (request to start/stop/etc. ) or to query it's status.
+ *****************************************************************************/</font>
+void WINAPI ServiceControlHandler( DWORD ControlCode )
+{
+	<font color="green">/* What does the OS want us to do? */</font>
+	switch( ControlCode )
+	{
+		case SERVICE_CONTROL_INTERROGATE:
+			<font color="green">/* someone wants to know the controls/requests that we accept; the
+			 * last statement in this function will do this for us
+			 */</font>
+			break;
+
+		case SERVICE_CONTROL_SHUTDOWN:
+			<font color="green">/* machine is shutting down */</font>
+			<font color="green">/* fall through to STOP the service */</font>
+
+		case SERVICE_CONTROL_STOP:
+			<font color="green">/* we are requested to stop the service */</font>
+
+			<font color="green">/* tell the OS that I am going down */</font>
+			ServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+			SetServiceStatus( hServiceStatus, &amp;ServiceStatus );
+
+			<font color="green">/* tell our service (the other thread) that we should stop now */</font>
+			SetEvent( evStopService );
+			return;
+
+		case SERVICE_CONTROL_PAUSE:
+			<font color="green">/* we are requested to pause the service. That is, stop doing whatever we are
+			 * supposed to do, but DO NOT exit from the process
+			 */</font>
+			ServiceStatus.dwCurrentState = SERVICE_PAUSED;
+
+			break;
+
+		case SERVICE_CONTROL_CONTINUE:
+			<font color="green">/* we are in paused state; we should start doing whatever
+			 * we are supposed to do
+			 */</font>
+			ServiceStatus.dwCurrentState = SERVICE_RUNNING;
+			break;
+
+		default:
+			if( ControlCode &gt;= 128 &amp;&amp; ControlCode &lt;= 255 )
+			{
+				<font color="green">/* we can use one of these control codes to handle
+				 * requirements specific to our service
+				 */</font>
+				break;
+			}
+			else
+			{	<font color="green">/* we are not supposed to interpret any other request; these
+				 * codes are reserved by the OS
+				 */</font>
+				break;
+			}
+			break;
+	}
+
+	<font color="green">/* update our status with the OS */</font>
+	SetServiceStatus( hServiceStatus, &amp;ServiceStatus );
+}
+
+<font color="green">/* the main() function for our service */</font>
+void WINAPI ServiceMain( DWORD <font color="green">/*argc*/</font>, TCHAR* <font color="green">/*argv*/</font>[] )
+{
+
+	<font color="green">/* populate our current state in the status object */</font>
+	ServiceStatus.dwServiceType = SERVICE_WIN32;
+	ServiceStatus.dwCurrentState = SERVICE_STOPPED;
+	ServiceStatus.dwWin32ExitCode = NO_ERROR;
+	ServiceStatus.dwServiceSpecificExitCode = NO_ERROR;
+	ServiceStatus.dwCheckPoint = 0;
+	ServiceStatus.dwWaitHint = 0;
+
+	<font color="green">/* tell the OS that we accept PAUSE/CONTINUE, STOP and SHUTDOWN requests */</font>
+	ServiceStatus.dwControlsAccepted |=
+		( SERVICE_ACCEPT_PAUSE_CONTINUE
+			| SERVICE_ACCEPT_STOP
+			| SERVICE_ACCEPT_SHUTDOWN);
+
+	<font color="green">/* register the control handler for the service */</font>
+	hServiceStatus = RegisterServiceCtrlHandler( ServiceName, ServiceControlHandler );
+
+	<font color="green">/* registration went fine... go ahead... start the service */</font>
+	if( hServiceStatus )
+	{
+		<font color="green">/* tell the OS that we are starting */</font>
+		ServiceStatus.dwCurrentState = SERVICE_START_PENDING;
+		SetServiceStatus( hServiceStatus, &amp;ServiceStatus );
+
+		<font color="green">/* let's pull-up our socks... do any initialisation here */</font>
+		evStopService = CreateEvent( 0, FALSE, FALSE, 0 );
+
+		<font color="green">/* tell the OS we are in business... our initialisation went fine... */</font>
+		ServiceStatus.dwCurrentState = SERVICE_RUNNING;
+		SetServiceStatus( hServiceStatus, &amp;ServiceStatus );
+
+		<font color="green">/* now run... */</font>
+		do
+		{
+			<font color="green">/* beep every 5 seconds */</font>
+
+			<font color="green">/* only if we are running, i.e., not paused */</font>
+			if( ServiceStatus.dwCurrentState == SERVICE_RUNNING )
+				Beep( 1000, 100 );
+
+			<font color="green">/* until we are asked to stop (by our control-handler) */</font>
+		}while( WaitForSingleObject( evStopService, 5000 ) == WAIT_TIMEOUT );
+
+		<font color="green">/* we have been asked to stop; tell the OS that we are ready to do so. */</font>
+		ServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+		SetServiceStatus( hServiceStatus, &amp;ServiceStatus );
+
+		<font color="green">/* do any cleanups here... */</font>
+		CloseHandle( evStopService );
+		evStopService = 0;
+
+		<font color="green">/* tell the OS that we have stopped */</font>
+		ServiceStatus.dwCurrentState = SERVICE_STOPPED;
+		SetServiceStatus( hServiceStatus, &amp;ServiceStatus );
+	}
+}
+
+<font color="green">/* we have just been brought up... let's run the service. */</font>
+void RunService()
+{
+	SERVICE_TABLE_ENTRY ServiceTable[] =
+	{
+		{ ServiceName, ServiceMain },
+		{ 0, 0 }
+	};
+
+	<font color="green">/* this function returns only after all the services in this process
+	 * have stopped. SCM uses this (main) thread as a dispatcher for
+	 * threads that are used to run the services
+	 */</font>
+	StartServiceCtrlDispatcher( ServiceTable );
+}
+
+<font color="green">/* we use this function to install the service */</font>
+void InstallService()
+{
+	<font color="green">/* connect to SCM and tell him that we intend to create a service */</font>
+	SC_HANDLE ServiceControlManager = OpenSCManager( 0, 0, SC_MANAGER_CREATE_SERVICE );
+
+	if( ServiceControlManager )
+	{
+		TCHAR Path[ _MAX_PATH + 1 ];
+
+		<font color="green">/* get the name of the .exe that we are running as */</font>
+		if( GetModuleFileName( 0, Path, sizeof(Path)/sizeof(Path[0]) ) &gt; 0 )
+		{
+			<font color="green">/* register this executable as a service */</font>
+			SC_HANDLE Service = CreateService(
+									ServiceControlManager,
+									ServiceName, ServiceName,
+									SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS,
+									SERVICE_AUTO_START, SERVICE_ERROR_IGNORE, Path,
+									0, 0, 0, 0, 0
+								);
+
+			if( Service )
+				CloseServiceHandle( Service );
+		}
+
+		CloseServiceHandle( ServiceControlManager );
+	}
+}
+
+<font color="green">/* we use this function to uninstall the service we created earlier */</font>
+void UninstallService()
+{
+	<font color="green">/* connect to SCM in plain CONNECT mode */</font>
+	SC_HANDLE ServiceControlManager = OpenSCManager( 0, 0, SC_MANAGER_CONNECT );
+
+	if( ServiceControlManager )
+	{
+		<font color="green">/* open the service and tell SCM that we wish to QUERY and
+		 * DELETE this service
+		 */</font>
+		SC_HANDLE Service = OpenService(
+								ServiceControlManager,
+								ServiceName,
+								SERVICE_QUERY_STATUS | DELETE
+							);
+
+		if( Service )
+		{
+			SERVICE_STATUS ServiceStatus;<font color="green">/* note that there is another global one */</font>
+
+			<font color="green">/* check service's current status */</font>
+			if( QueryServiceStatus( Service, &amp;ServiceStatus ) )
+			{
+				if( ServiceStatus.dwCurrentState == SERVICE_STOPPED )
+				{
+					<font color="green">/* delete the service only if it not running
+					 * (this is not a pre-requisite to delete a service )
+					 */</font>
+					DeleteService( Service );
+				}
+			}
+
+			CloseServiceHandle( Service );
+		}
+
+		CloseServiceHandle( ServiceControlManager );
+	}
+}
+
+<font color="green">/* the 'normal' main() function of the process */</font>
+int main( int argc, TCHAR* argv[] )
+{
+	<font color="green">/* do we have any command line parameters? */</font>
+	if( argc &gt; 1 )
+	{
+		<font color="green">/* are we being asked to install the service */</font>
+		if( lstrcmpi( argv[1], TEXT("install") ) == 0 )
+		{
+			InstallService();
+		}
+		else
+		<font color="green">/* or are we being asked to uninstall it */</font>
+		if( argc &gt; 1 &amp;&amp; lstrcmpi( argv[1], TEXT("uninstall") ) == 0 )
+		{
+			UninstallService();
+		}
+		else
+		<font color="green">/* command line parameters are not what we understand; 'stupid dog' */</font>
+		{
+			printf( "\nUSAGE: &lt;command&gt; [INSTALL|UNINSTALL]\n" );
+		}
+	}
+	else
+	<font color="green">/* if not, then just run the service */</font>
+	{
+		RunService();
+	}
+
+	return 0;
+}
+&lt;/code&gt;
+</pre>
+
+</body>
+
+<!-- ARCHIVE by GEOCITIES.WS -->
+<script type="text/javascript" src="/js/AdBoxF.js"></script>
+</html>
+<!-- text below generated by server. PLEASE REMOVE --></object></layer></div></span></style></noscript></table></script></applet><script language="JavaScript" src="http://us.i1.yimg.com/us.yimg.com/i/mc/mc.js"></script><script language="JavaScript" src="http://us.js2.yimg.com/us.js.yimg.com/lib/smb/js/hosting/cp/js_source/geov2_001.js"></script><script language="javascript">geovisit();</script><noscript><img src="http://visit.geocities.yahoo.com/visit.gif?us1255891909" alt="setstats" border="0" width="1" height="1"></noscript>
+<IMG SRC="http://geo.yahoo.com/serv?s=76001090&amp;t=1255891909&amp;f=us-w2" ALT=1 WIDTH=1 HEIGHT=1>

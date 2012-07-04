@@ -1,0 +1,474 @@
+/*****************************************************************************
+ *
+ * This document is licensed under GNU GPL 2.0 (www.gnu.org/copyleft/gpl.html)
+ *
+ * Author : singh.gurjeet@{gmail | hotmail | yahoo }.com
+ *
+ *****************************************************************************/
+
+Purpose:
+========
+    To be able to debug postgres on Windows using a GUI IDE.
+
+
+Target Audience:
+================
+    Windows developers who have never compiled/linked/run postgres on Windows.
+    Developers who have experience of compiling postgres using Cygwin/MSYS/MinGW
+       but would like to debug using a GUI.
+
+
+IDE:
+====
+    Eclipse + CDT plug-in.
+
+
+Pre-requisites:
+===============
+    The Msys toolkit + a few mingw tools.
+
+
+Advantages:
+===========
+    Using the combination of Eclipse + CDT + msys, from within the IDE you can:
+      1) Browse the code in a Visual Editor.
+      2) Search for declarations/definitions of C/C++ symbols within the IDE.
+      2) Compile the PGSQL binary from within the IDE.
+      3) Attach to a running postgres.exe and debug it.
+      4) All this, without having to create projects, or deciding which files
+         should you include in the IDE's project! It'll automatically  create
+	 the project based on your makefiles.
+
+
+    Well, since version 8.0, postgres is being compiled natively on Windows;
+       before that, Cygwin emulation layer was used to compile and run postgres
+       on Windows. So, since 8.0, PGSQL is able to do almost everything on
+       Windows, that it can do on a Nixen<sup>1</sup>; like creating
+       tablespaces, for which links are used on Nixen, and junction-points are
+       used on Windows (supported only by NTFS 5.0 or greater).
+
+So, here it goes:
+
+
+Download:
+=========
+
+    Download the following packages from the sites listed before them:
+
+    http://www.mingw.org/download.shtml         MSYS-1.0.10.exe
+    http://www.mingw.org/download.shtml         msysDTK-1.0.1.exe
+    http://www.mingw.org/download.shtml         mingw32-make-3.80.0-3.exe
+    http://www.mingw.org/download.shtml         gdb-5.2.1-1.exe
+
+    http://www.mingw.org/download.shtml         mingw-runtime-3.9.tar.gz
+    http://www.mingw.org/download.shtml         mingw-utils-0.3.tar.gz
+    http://www.mingw.org/download.shtml         gcc-core-3.4.2-20040916-1.tar.gz
+    http://www.mingw.org/download.shtml         gcc-g_-3.4.2-20040916-1.tar.gz
+    http://www.mingw.org/download.shtml         w32api-3.6.tar.gz
+    http://www.mingw.org/download.shtml         binutils-2.15.91-20040904-1.tar.gz
+
+    http://www.mingw.org/download.shtml         bison-2.0-MSYS.tar.gz
+
+    http://sourceforge.net/projects/gnuwin32    flex-2.5.4a-1-bin.zip
+
+    http://www.eclipse.org/                     eclipse-SDK-3.1.2-win32.zip
+    http://www.eclipse.org/cdt/                 org.eclipse.cdt-3.0.2-win32.x86.zip
+           OR
+    http://download.eclipse.org/tools/cdt/releases/eclipse3.1/dist/3.0.2/
+
+Install the msys + mingw toolkit:
+=================================
+
+    Install the packages in the following order to the locations specified.
+       Remember to read notes under 'My Configuration' section below.
+
+    MSYS-1.0.10.exe            D:\msys\1.0
+    msysDTK-1.0.1.exe          D:\msys\1.0
+    mingw32-make-3.80.0-3.exe  D:\msys\1.0\mingw
+    gdb-5.2.1-1.exe            D:\msys\1.0\mingw
+
+    Now _copy_ all the *.tar.gz files, except for 'bison-2.0-MSYS.tar.gz',
+       listed above to the folder D:/msys/1.0/mingw/ .
+
+    Open the msys console (or the 'shell' if you prefer), from the 'Programs'
+       menu (or the Desktop, if you creaed a shortcut there). Then execute the
+       following list of commands, one after the other, looking for any errors
+       after each one of them:
+
+cd /mingw
+for i in `ls *.tar.gz`; do tar xfz $i; done
+cp -a /mingw/mingw32/* /mingw
+
+    A note of caution from AumAum's page (see 'Acknowledgement' below):
+
+      It's crucial to crack the tarballs into /mingw (D:\msys\n.n\mingw),
+         because if you crack any of them into / (D:\msys\n.n), you'll cause
+	 some subtle conflicts between MSYS and the MinGW tools which will cause
+	 your compilations to fail.
+
+    Now, test that your compiler is working fine; execute the following
+       commands (in msys shell):
+
+cd ~
+cat > hello.c << EOF
+#include <stdio.h>
+int main(){printf( "Hello World\n" ); }
+EOF
+gcc hello.c
+./a.exe
+
+    If you see the greeting 'Hello World' after executing a.exe, then
+       congratulations.... you have the msys toolkit working.
+
+    Using WinZip or some such utility (use free alternative IZarc.org), extract
+       'flex-2.5.4a-1-bin.zip' to D:/msys/1.0/mingw/ and 'bison-2.0-MSYS.tar.gz'
+       to D:\msys\1.0 .
+
+    At this point, you can delete the *.tar.gz files that were copied into
+       D:/msys/1.0/mingw/ .
+    
+    And delete the hello.c and a.exe using the following commands
+       (in msys shell):
+
+cd ~
+rm hello.c a.exe
+
+Test postgres compilability:
+============================
+
+    Now its time to test if this setup can actually compile postgres sources...
+       If you have not done it yet, then get the sources of postgres (using CVS
+       or the per-release tarball from the site), let's say in the directory
+       D:/Dev/postgres/pgsql_tip/ .
+
+    Note: In the msys shell, the Windows' drives are accessed as /a OR /b OR /c
+       etc. So, in the following command-set, I am trying to install postgres in
+       the Windows' F:/pgsql .
+
+    In the msys shell, execute the following commnads (first read the
+       'A few tricks' section below):
+
+cd /d/Dev/postgres/pgsql_tip
+make distclean
+./configure --without-zlib --enable-debug --prefix=/f/pgsql
+make
+make install
+
+    If everything goes well, you should have a directory tree under F:/pgsql/
+       that has all the binaries to run postgres. But you won't be able to run
+       postgres; at least not if you are logged in a an Administrator or a login
+       with Administrators group. This is because postgres is designed not to
+       run with Administrator privileges; so that the security of you machine is
+       not compromised even if somebody is able to break into postgres.
+
+Setup the environment:
+======================
+
+    Add the following to your PATH environment variable in Windows:
+    ;D:\msys\1.0\mingw\bin;D:\msys\1.0\bin;F:\pgsql\bin;F:\pgsql\lib
+
+    (instructions: right-click 'My Computer' > Properties > Advanced >
+       'Environment Variables' )
+
+    This will enable you to run MinGW and postgres cammands from Windows' cmd
+       prompt. Alternatively, create a file setpgenv.bat with the following
+       contents and execute it from the cmd.exe everytime you wish to use MinGW
+       commands:
+
+E:\WINNT\system32\chcp.com 1252
+set PATH=%PATH%;D:\msys\1.0\mingw\bin;D:\msys\1.0\bin;F:\pgsql\bin;F:\pgsql\lib
+
+
+    Create a file setpgenv.sh with the following contents:
+
+#!/bin/sh
+/e/WINNT/system32/chcp.com 1252
+PATH=$PATH:/d/msys/1.0/mingw/bin:/d/msys/1.0/bin:/f/pgsql/bin:/f/pgsql/lib
+
+    and include a line like the following in your msys' /etc/profile file:
+
+source /d/Dev/postgres/setpgenv.sh
+
+    Remember, all the steps listed above are to be performed as the logged in
+       user, not for the user you are going to create next.
+
+    Create a user by the name postgres on your machine. (Read the docs for your
+       version of Windows to know how to do it.)
+    Assign a password to this user, and remember it.
+
+Test postgres:
+==============
+
+    To run and test postgres, do the following:
+
+    Run the following command in cmd.exe or the Start > Run dialog box:
+
+    runas /env /user:postgres cmd
+
+    when asked for the password, key in the password you assigned to the user
+       postgres. And... you are logged in as user postgres.
+
+    Reminder: the /env switch to the runas command passes on the current
+       environment to the new process being created. So, you have to either set
+       the msys/mingw/pgsql variables in your PATH variable, or run the
+       setpgenv.bat file before running this command.
+
+    From within this new console, fire up the msys shell using the following
+       command:
+
+sh
+
+    Now set the environment variables so that the postgres' utilities can be
+       found on the $PATH variable (no need to do this if you have set these in
+       the First user's environment varaible).
+
+source /d/Dev/postgres/setpgenv.sh
+
+    Now we can run the postgres RDBMS as this user and test if it is working
+       fine. To do so, run the following commands:
+
+initdb -D /f/pgsql/data
+pg_ctl -D /f/pgsql/data/ -l /f/pgsql/pgsql.log start
+pg_ctl -D /f/pgsql/data/ status
+
+createdb test
+
+psql test
+create table t( a int );
+insert into t values ( 1 );
+insert into t values ( 2 );
+select * from t;
+
+    Optionally, to run the regression tests, run the following commands:
+
+cd /d/Dev/postgres/pgsql_tip/src/test/regress
+make clean all runtest
+
+    Note: there may be a few 'timeout' errors, you can safely ignore them. If
+       the tablespace testing scripts fail, then make sure that the value of the
+       --prefix switch of 'configure', i.e. /f/pgsql/, points to a NTFS 5.0
+       partition; you might have to 'make install' postres again.
+
+Install Eclipse + CDT:
+======================
+
+    Extract the eclipse-SDK-3.1.2-win32.zip package to a folder of your choice.
+    Extract org.eclipse.cdt-3.0.2-win32.x86.zip to the same directory. This will
+       extract all the CDT related files into the 'plugins' directory.
+
+Create the Workspace and the project:
+=====================================
+
+    Create a directory Eclipse_Workspace at your favourite place except anywhere
+       under Postgres source's directory.
+
+D:/Dev/postgres/Eclipse_Workspace/
+
+    Run the eclipse.exe file from the installation directory.
+
+    If shown the dialog-box to choose a workspace, point it to the above created
+       directory, otherwise, go to File > 'Switch Workspace' and point it to the
+       above created directory.
+
+    go to Window > 'Open Perspective' > Other > C/C++ .
+
+    This will switch to the CDT plugin. Now we wre ready to create a C/C++
+       project.
+
+    go to File > New > 'Standard make C project'
+
+    Give the project a name 'pgsql_tip'. And uncheck the 'Use Default' box, and
+       point it to your postgres' source directory.
+
+    D:/Dev/postgres/pgsql_tip/
+
+    Click Next, and under the 'C/C++ Indexer' tab choose 'No Indexer'. We are
+       disabling the indexer just so that it doesn't slow down the computer
+       right now. We can/will switch on the Indexer again later.
+
+    The moment you click Finish, Eclipse/CDT runs the following command
+       'make clean all', which in effect tries to rebuild the whole project
+       using the GNUMakefile in the root of the project. You can see the
+       progress in the 'Console' view or the 'Progress' view.
+
+    Reminder: You must have the msys/mingw environment variables set for Eclipse
+       to find the right make/gcc/gdb tools. If not set in the PATH variable,
+       then you must run the setpgenv.bat in a console and run Eclipse.exe from
+       within that cmd.exe .
+
+    Now, right-click on the project (in the 'C/C++ Projects' view), and click on
+       'Build Make Target...'. In the resulting dialog box, click on 'Add' and
+       assign 'Target Name' as 'clean',  'Make Target' as 'clean', leave the
+       check-box 'Use default' checked, and click on create.
+
+    Create another entry named 'all', following the same steps as described
+       above.
+
+    From now on, we'll use these 'make' targets to build or clean the postgres
+       binaries.
+
+    Right-click on the project (in the 'C/C++ Projects' view), click on
+       properties, and select 'C/C++ Make Project' in the left pane. Select the
+       'Binary Parser' tab, and check the check-box against 'PE Windows Parser'.
+       This will allow the CDT to auto-discover the binaries built by a make
+       command, and allow you to attach to a running process with the same image.
+
+    Note: You might not encounter this following problem, but I do always.
+       During the 'make all' session, the make command fails with the error
+       'The system cannot find the file specified.' when trying to execute the
+       following command:
+
+AWK='gawk' /bin/sh.exe Gen_fmgrtab.sh ../../../src/include/catalog/pg_proc.h
+
+    So, all that I do is open the msys shell, and execute the following commands:
+
+cd /d/Dev/postgres/pgsql_tip/src/backend/utils/
+AWK='gawk' /bin/sh.exe Gen_fmgrtab.sh ../../../src/include/catalog/pg_proc.h
+
+    and come back to Eclipse, right-click on pgsql_tip project (in the
+       'C/C++ Projects' view) and issue the 'Build Make Target...' command.
+
+    Note: if you haven't run the 'Test postgres compilability' section above,
+       then you have to run atleast the 'configure' command listed in that
+       section for 'make' to be able to compile the project.
+
+    Finally, in the 'Console' view of Eclipse, you should see the statement
+       'All of PostgreSQL successfully made. Ready to install.'. This means,
+       everything went fine, and we have successfully compiled postgres from
+       within the IDE.
+
+Debugging postgres:
+===================
+
+    Open cmd.exe as user postgres. (Follow the instructions under the section
+       'Test postgres' till 'source setpgenv.sh'.)
+
+    Execute the following command in the resulting msys shell to get postmaster
+       (postgres' master process) running:
+
+pg_ctl -D /f/pgsql/data/ start -l /f/pgsql/pgsql.log
+
+    Open another cmd.exe as user postgres, and run eclipse.exe from within that.
+       Something like:
+
+D:\Dev\eclipse-SDK-3.1.2-win32\eclipse.exe
+    
+    Eclipse needs to be run as OS user postgres because all the postgres' shadow
+       processes forked from now on will be running with the OS user postgres'
+       permissions; and to attach a debugger to that process, you should be
+       running the debugger as that user.
+
+    Reminder: Do not close the cmd.exe window from which you have started
+       postmaster (using the pg_ctl command). Although that process has been
+       sent to the background, still the whole database will come down if you
+       close that window.
+    Again, msys/mingw need to be a part of the $PATH variable before you start
+       eclipse.
+
+    If not opened by default, open the workspace created earlier (see section
+       'Create the Workspace and the project'), and switch to C/C++ perspective.
+
+    Open a new cmd.exe (not necessarily as user postgres), and launch
+
+psql test postgres
+
+    This will connect to database 'test' as user 'postgres'.
+
+    Find the process-id of the shadow process of this connection.
+       (To find this pid, open Task Manager before launching 'psql', and note
+       down the pids of all the postgres.exes running. Now launch psql as above,
+       and find the new postmaster.exe which wasn't present before. (the ps
+       command doesn't seem to be showing processes from other users) )
+    
+    Back in Eclipse, click on the Debug button on the toolbar(the one with bug
+       in the icon). If it is the first time, it shows a dialog box 'Debug'.
+       Click on 'C/C++ Attach to Local Application', and if a configuration
+       doesn't exist under it, then click on the button 'New' to create a new
+       configuration under it.
+
+    For this configuration, under the 'Main' tab, in 'Project' text-box, write
+       the name of your project (pgsql_tip) or click on 'Browse' button to see a
+       list of projects in your workspace.
+
+    For the 'C/C++ Application' text-box, click on 'Search Project...' button to
+       see a list of binaries discovered by the binary parsers associated with
+       the workspace. Choose 'postgres.exe' and click 'OK'.
+
+    Explore the other tabs too, but for now, accept the defaults, and click on
+       'Apply' and then click on 'Debug' button.
+
+    CDT will pop-up a list of processes running on the machine. You would find
+       quite a few postgres.exes, choose the one with the pid that we noted
+       earlier, and click 'OK'.
+
+    If/When asked to switch Perspective to 'Debug', click 'OK'. This will switch
+       from C/C++ perspective to Debug perspective, which allows you to do all
+       the tasks related to debugging; like viewing the stack, viewing local
+       variables' values, view memory, etc. etc. .
+
+    Well, once you are in the Debug perspective, you will be shown a stack in a
+       view named 'Debug'. Right now, all the threads of the debugger are
+       'Suspended'. Here, open up the threads, and under each you will see a
+       stack of each of the threads. Double click on the one that says
+       'pgwin32_recv() at socket.c:248 ...', and the corresponding code will
+       pop-up in the editor window. Double-clicking on the grey bar to the left
+       in the editor will put a breakpoint. Put a breakpoint on the line that
+       says WSARecv( ... ). Click on the green arrow in the 'Debug' view; this
+       will allow all the suspended threads to resume execution.
+
+    Go back to the psql prompt, and fire up a SQL query, the debugger will stop
+       at the breakpoint you just created, and you can take control from there.
+
+    We have deferred source code indexing till now because it consumes a lot of
+       CPU and a lot of memory, which would slow down you other processing. To
+       enable indexer, right-click on the project in the 'C/C++ projects' view,
+       and select 'Properties'. Select 'C/C++ Indexer' in the left pane, and
+       from the drop-down list choose 'Full C/C++ Indexer' and click 'OK'.
+       The moment you finish this task, the indexer will start in the background;
+       be patient, it might make Eclipse hung at times, but it will come back. 
+
+A few tricks:
+=============
+    1) You should use the switch --enable-debug for the configure script; if you
+       don't, then gdb won't be able to show you the lines, and hence, you won't
+       see any source code in the Eclipse.
+
+    2) Open the 'configure' file from the source root of pgsql
+       (pgsql_tip/configure), and find the line with the following contents:
+
+elif test "$GCC" = yes; then
+  CFLAGS="-O2"
+
+    And change
+      CFLAGS="-O2"
+    to
+      CFLAGS="-O0"
+
+    This change will disable the optimizations done by the compiler. We need to
+       do this, otherwise, while debugging, the pointer in the editor will not
+       follow the flow of the code.
+
+    After this change to the 'configure' script, make sure you run the configure
+       script again with --enable-debug switch.
+
+My Configuration:
+=================
+TODO : finish this section
+
+I used PG 8.0.3
+
+
+<sup>1</sup> Nixen : member of Unix clan. Same word is used for plural too.
+
+Acknowledgement: It wasn't possible for me to get the steps right for installing
+                 msys + mingw, if not for the following document:
+
+    http://www.mingw.org/MinGWiki/index.php/RealDumbQuickstart
+
+    Yes, I had to help from this page specially written for _dumb_ starters.
+       Every time I tried my hands on installing both msys and mingw alogside
+       each other, I made a constant mistake; and the 'get more involved'
+       section in this page helped me to sort it out. Although, I made a subtle
+       change in the placing of mingw tools in this document. Thanks again to
+       'AumAum'.
+
