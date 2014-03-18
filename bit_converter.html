@@ -1,0 +1,235 @@
+<!doctype html>
+<html ng-app>
+    <head>
+        <title>Convert between bits, kilobits, Bytes, kiloBytes, Megabits, MegaBytes, Gigabits, GigaBytes, Terabits, TeraBytes, Petabits, PetaBytes</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+        <style>
+            input {
+                text-align: right;
+            }
+
+            body {
+                background-color: beige;
+            }
+        </style>
+        <script>
+
+            function updateValues(scope, bitValue) {
+                scope.bitValue  = bitValue;
+                scope.kilobitValue  = bitValue / 1024;
+                scope.byteValue = bitValue / 8;
+                scope.kBValue   = bitValue / 8 / 1024;
+                scope.MBValue   = bitValue / 8 / 1024 / 1024;
+                scope.GBValue   = bitValue / 8 / 1024 / 1024 / 1024;
+                scope.TBValue   = bitValue / 8 / 1024 / 1024 / 1024 / 1024;
+                scope.PBValue   = bitValue / 8 / 1024 / 1024 / 1024 / 1024 / 1024;
+            }
+
+            function appCtrl($scope) {
+
+                // The default when the app is loaded
+                //$scope.bitValue = 8 * 1024;
+
+                $scope.$watch("bitValue", function(newVal, oldVal){
+                    updateValues($scope, newVal);
+                });
+
+                $scope.$watch("kilobitValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 1024);
+                });
+
+                $scope.$watch("byteValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 8);
+                });
+
+                $scope.$watch("kBValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 8 * 1024);
+                });
+
+                $scope.$watch("MBValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 8 * 1024 * 1024);
+                });
+
+                $scope.$watch("GBValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 8 * 1024 * 1024 * 1024);
+                });
+
+                $scope.$watch("TBValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 8 * 1024 * 1024 * 1024 * 1024);
+                });
+
+                $scope.$watch("PBValue", function(newVal, oldVal){
+                    updateValues($scope, newVal * 8 * 1024 * 1024 * 1024 * 1024 * 1024);
+                });
+            }
+        </script>
+    </head>
+    <body>
+
+        <h1>Converter for digital units</h1>
+        <p>
+            Input the value in a field corresponding to the unit you want converted, and the
+            application will automatically populate the other fields with the converted value
+            in respective units.
+        </p>
+
+        <p>
+            A decent web-browser with JavaScript support is required.
+        </p>
+
+        <form name="app" ng-controller="appCtrl">
+            <table>
+                <tr>
+                    <td>
+                        bits
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="bitField"
+                            ng-model="bitValue"
+                            placeholder="number of bits here">
+                    </td>
+                    <td>
+                        b
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        kilobits
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="kilobitField"
+                            ng-model="kilobitValue"
+                            placeholder="number of kilobits here">
+                    </td>
+                    <td>
+                        kb
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Bytes
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="byteField"
+                            ng-model="byteValue"
+                            placeholder="number of bytes here">
+                    </td>
+                    <td>
+                        B
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        kiloBytes
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="kBField"
+                            ng-model="kBValue"
+                            placeholder="number of kiloBytes here">
+                    </td>
+                    <td>
+                        kB
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        MegaBytes
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="MBField"
+                            ng-model="MBValue"
+                            placeholder="number of MegaBytes here">
+                    </td>
+                    <td>
+                        MB
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        GigaBytes
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="GBField"
+                            ng-model="GBValue"
+                            placeholder="number of GigaBytes here">
+                    </td>
+                    <td>
+                        GB
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        TeraBytes
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="TBField"
+                            ng-model="TBValue"
+                            placeholder="number of TeraBytes here">
+                    </td>
+                    <td>
+                        TB
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        PetaBytes
+                    </td>
+                    <td>
+                       <input
+                            type="number"
+                            name="PBField"
+                            ng-model="PBValue"
+                            placeholder="number of PetaBytes here">
+                    </td>
+                    <td>
+                        PB
+                    </td>
+                </tr>
+            <table>
+            <span class="error" ng-show="app.bitField.$error.number">Not valid number!</span>
+        </form>
+
+        <h2>About</h2>
+        <p>
+            This is a simple application writen using <a href="http://www.angularjs.org">AngularJS</a>.
+            This application works completely within the browser, and does not send any data to the server.
+            Hence the conversions are instantaneous.
+        </p>
+
+        <p>
+            Inspired by <a href="http://www.matisse.net/bitcalc/">Bit Calculator</a>, but that requires
+            that the user press a button, and the data is sent to the server, which performs
+            the calulation and sends the results back.
+        </p>
+
+        <p>
+            The code of this aplication is hosted on Github: <a href="https://github.com/gurjeet/bit_converter">Bit Converter</a>
+        </p>
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-3137805-5', 'singh.im');
+          ga('send', 'pageview');
+
+        </script>
+
+    </body>
+</html>
