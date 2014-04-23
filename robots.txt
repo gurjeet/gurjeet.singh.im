@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /edb_file_list.html
+
