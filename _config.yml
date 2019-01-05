@@ -31,7 +31,7 @@ plugins:
   - jekyll-feed
 
 source: ./jblog
-permalink: "jblog/:year/:month/:day/:title"
+permalink: "/:year/:month/:day/:title"
 
 
 # Exclude from processing.
