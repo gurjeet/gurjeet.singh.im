@@ -30,6 +30,7 @@ theme: minima
 plugins:
   - jekyll-feed
 
+source: ./jblog
 permalink: "jblog/:year/:month/:day/:title"
 
 
