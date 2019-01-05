@@ -30,7 +30,7 @@ theme: minima
 plugins:
   - jekyll-feed
 
-permalink: "blog/:year/:month/:day/:title/"
+permalink: "jblog/:year/:month/:day/:title/"
 
 
 # Exclude from processing.
