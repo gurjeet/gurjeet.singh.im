@@ -22,7 +22,6 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "" # the subpath of your site, e.g. /blog
 source: ./jblog
 permalink: "jblog/:year/:month/:day/:title"
-include: ["images"]
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
@@ -33,7 +32,8 @@ theme: minima
 plugins:
   - jekyll-feed
 
-
+disqus:
+  shortname: gurjeet-singh-im-blog
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
