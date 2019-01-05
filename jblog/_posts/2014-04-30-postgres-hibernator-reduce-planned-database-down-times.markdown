@@ -32,8 +32,8 @@ The ramp-up time is even shorter if you wait for the Postgres Hibernator process
 
 ## Sample Runs
 
-![Postgres Hibernator Comparison](/../images/pg_hibernator_comparison.png)
-![Postgres Hibernator Comparison Bars](/../images/pg_hibernator_comparison_bars.png)
+![Postgres Hibernator Comparison](/images/pg_hibernator_comparison.png)
+![Postgres Hibernator Comparison Bars](/images/pg_hibernator_comparison_bars.png)
 
 As is quite evident, waiting for Postgres Hibernator to finish loading the data blocks before starting the application yeilds a 97% impprovement in database ramp-up time (2300 seconds to get to 122k TPS without Postgres Hibernator vs. 70 seconds).
 
