@@ -3,6 +3,7 @@ layout: post
 title: "Postgres Hibernator: Reduce Planned Database Down Times"
 date: 2014-04-30 17:23:57 +0000
 comments: true
+permalink: blog/:year/:month/:day/:title/
 categories: Postgres
 ---
 

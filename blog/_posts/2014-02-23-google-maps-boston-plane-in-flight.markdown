@@ -3,6 +3,7 @@ layout: post
 title: "Google Maps Boston Plane in-flight"
 date: 2014-02-23 03:08:11 +0000
 comments: true
+permalink: blog/:year/:month/:day/:title/
 categories: 
 ---
 

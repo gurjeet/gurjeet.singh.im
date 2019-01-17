@@ -3,6 +3,7 @@ layout: post
 title: "Hibernating and Restoring Postgres Buffer Cache"
 date: 2014-01-21 03:01:45 +0000
 comments: true
+permalink: blog/:year/:month/:day/:title/
 categories:
 - Postgres
 - Administration
