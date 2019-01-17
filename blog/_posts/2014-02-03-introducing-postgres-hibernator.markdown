@@ -3,6 +3,7 @@ layout: post
 title: "Introducing Postgres Hibernator"
 date: 2014-02-03 21:28:46 +0000
 comments: true
+permalink: blog/:year/:month/:day/:title/
 categories: 
 - Postgres
 - DBA

@@ -3,6 +3,7 @@ layout: post
 title: "Announcing TPC-C.js; A Lightweight Implementation of TPC-C"
 date: 2014-07-23 22:53:08 +0000
 comments: true
+permalink: blog/:year/:month/:day/:title/
 categories:
 - Postgres
 - Performance

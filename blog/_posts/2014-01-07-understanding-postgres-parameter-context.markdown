@@ -3,6 +3,7 @@ layout: post
 title: "Understanding Postgres Parameter Context"
 date: 2014-01-07 21:55:21 +0000
 comments: true
+permalink: blog/:year/:month/:day/:title/
 categories:
 - Postgres
 - Administration
