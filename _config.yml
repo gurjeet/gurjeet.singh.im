@@ -23,8 +23,8 @@ baseurl: "" # the subpath of your site, e.g. /blog
 source: ./blog
 permalink: "blog/:title"
 url: "http://gurjeet.singh.im" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+twitter_username: singh_gurjeet
+github_username: gurjeet
 
 # Build settings
 markdown: kramdown
