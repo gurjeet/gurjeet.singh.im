@@ -18,7 +18,7 @@ is also the [22nd anniversary] of the TPC-C benchmark.
 It currently supports [Postgres] database, but can be easily extended to test
 other database systems.
 
-[beta]: https://github.com/gurjeet/DBYardstick/tree/v0.1.0/TPC-C
+[beta]: https://github.com/DBYardstick/TPC-C/tree/master/TPC-C
 [TPC-C]: http://www.tpc.org/tpcc/default.asp
 [22nd anniversary]: http://www.tpc.org/information/sessions/sigmod/sld007.htm
 [Postgres]: http://www.postgresql.org/
@@ -34,7 +34,7 @@ Short answer: This one is very light on system resources, so you can
 Long answer: It's covered in the [Motivation] section of TPC-C.js, which I'll
 quote here:
 
-[Motivation]: https://github.com/gurjeet/DBYardstick/tree/master/TPC-C#motivation
+[Motivation]: https://github.com/DBYardstick/TPC-C/tree/master/TPC-C#motivation
 
 > Motivation
 > ==========
