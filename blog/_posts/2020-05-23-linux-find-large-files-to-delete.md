@@ -15,6 +15,14 @@ Often we are faced with the situation of running out of disk storage, and we
 have to quickly find some large files to delete to free up the storage as soon
 as possible.
 
+### Update (2020/05/25)
+
+Someone on [Hacker News][] pointed me to [ncdu][], which helps with the same
+problem, and is much more advanced than my clunky one-liner.
+
+[Hacker News]: https://news.ycombinator.com/item?id=23287682
+[ncdu]: https://en.wikipedia.org/wiki/Ncdu
+
 ## Other Solutions
 
 When faced with this situation on Windows OS, I immediately turn to
