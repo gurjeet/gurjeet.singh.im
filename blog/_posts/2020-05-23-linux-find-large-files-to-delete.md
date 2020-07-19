@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Find Large Files to Delete"
-date:   2030-05-23 16:27:00 -0800
+date:   2020-05-23 16:27:00 -0800
 categories: Linux
 ---
 
