@@ -21,7 +21,11 @@ The lesson for me here is that design software with the [POLA][] in mind.
 Specifically, don't make the software take actions unless the customer
 explicitly either takes that action, or approves that action.
 
+Update 1: To identify this behaviour more easily, I'll call this behaviour
+["Spooky action at a distance"][spooky action].
+
 [comment]: https://github.com/13-37-org/infnoise/issues/15#issuecomment-453848323
 [POLA]: https://en.wikipedia.org/wiki/Principle_of_least_astonishment
+[spooky action]: https://en.wikipedia.org/wiki/Quantum_entanglement
 
 
