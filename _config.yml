@@ -29,6 +29,9 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-github-metadata
+
+repository: gurjeet/gurjeet.singh.im
 
 disqus:
   shortname: gurjeet-singh-im-blog

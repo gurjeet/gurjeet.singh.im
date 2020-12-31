@@ -17,6 +17,7 @@
         </label>
 
         <div class="trigger">
+<p>This site is open source. {% github_edit_link "Improve this page" %}</p>
           {%- for path in page_paths -%}
             {%- assign my_page = site.pages | where: "path", path | first -%}
             {%- if my_page.title -%}

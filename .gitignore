@@ -1,2 +1,5 @@
 # Ignore the output of Jekyll builds
 /_site
+
+# Ignore the lock file for Ruby Gems
+/Gemfile.lock

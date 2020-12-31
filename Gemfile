@@ -30,3 +30,6 @@ gem "wdm", "~> 0.1.0" if Gem.win_platform?
 
 gem 'github-pages', group: :jekyll_plugins
 
+gem 'jekyll-github-metadata', '~> 2.13', group: :jekyll_plugins
+
+
