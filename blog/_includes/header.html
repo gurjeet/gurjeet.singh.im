@@ -17,6 +17,13 @@
  <!--- It very likely one of the following incarnations that should work
    
    Number 1 seems to works on local testing, but uses `gh-pages` as the branch. So presumably it should use the `master` branch in the generated link when pushed to GitHub and processed by Jekyll there, because the site.github namespace would be properly populated. But when pushed to Github, it doesn't work at all; the links don't even get generated in the resulting site.
+
+   Some resources to restart work from:
+   https://github.com/jekyll/github-metadata/commit/c9e3055c06e53492cd03344379764fdbf1337dbb#diff-ed91db828831b655c6ee20a40d80c203be4f93088b19f102ef36fd73f06a689d
+   https://devhints.io/jekyll-github
+   https://github.com/jekyll/github-metadata/blob/c0d0fa8057c02bb5de23af90b4b8c27e529350d7/docs/site.github.md
+   https://github.com/jekyll/github-metadata/blob/c0d0fa8057c02bb5de23af90b4b8c27e529350d7/lib/jekyll-github-metadata/repository_compat.rb
+   
  -->
 <p>1 This site is open source. {% github_edit_link "Improve this page" %}</p>
 <p>2 This site is open source. <a href="{% github_edit_link %}">Improve this page</a></p>
