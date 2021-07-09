@@ -41,11 +41,11 @@ layout: default
         env:
         {{ process.env }}
 
-        {{comment}}
+        {%comment%}
         github:
           Generates huge output
           {{ site.github }}
-          {{endcomment}}
+        {%endcomment%}
 
         page:
         {{ page }}
