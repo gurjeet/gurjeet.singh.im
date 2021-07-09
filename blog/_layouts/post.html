@@ -19,37 +19,6 @@ layout: default
     </p>
   </header>
 
-  page path: {{ page.path }} <br>
-  page name: {{ page.name }} <br>
-  site title: {{ site.title }} <br>
-  site source: {{ site.source }} <br>
-
- 
-        site:
-        {{ site }}
-        post:
-        {{ post }}
-        source:
-        {{ source }}
-        layout:
-        {{ layout }}
-        done1
-
-        page-build:
-        {{ page_build }}
-
-        env:
-        {{ process.env }}
-
-        {%comment%}
-        github:
-          Generates huge output
-          {{ site.github }}
-        {%endcomment%}
-
-        page:
-        {{ page }}
-        done2
   <div class="post-content e-content" itemprop="articleBody">
     {{ content }}
   </div>
