@@ -18,6 +18,9 @@ layout: default
       </span>
     </p>
   </header>
+
+        page path: {{ page.path }}
+        page name: {{ page.name }}
  
         site:
         {{ site }}
@@ -35,8 +38,11 @@ layout: default
         env:
         {{ process.env }}
 
+        <!--
         github:
-        {{ site.github }}
+          Generates huge output
+          {{ site.github }}
+        -->
 
         page:
         {{ page }}
