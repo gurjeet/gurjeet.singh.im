@@ -23,7 +23,6 @@ cat << EOF > "$FILE_PATH"
 layout: post
 title:  "${TITLE}"
 date:   $(date "+%Y-%m-%d %H:%M:%S %z")
-$(echo hello there)
 categories: Comma, Separated, Categories, Go, Here
 ---
 
