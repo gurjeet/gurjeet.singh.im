@@ -5,6 +5,8 @@ date:   2021-08-31 09:31:43 -0700
 categories: Postgres, Community, Contributions, Open Source
 ---
 
+Update ca. 2023: I no longer work at Supabase.
+
 Yesterday I joined [Supabase][]; they provide Backend-as-a-Service, which is
 developed on top of their Postgres-as-a-Service offering. They provide many
 features, utilities, libraries, and services around the Postgres database that
