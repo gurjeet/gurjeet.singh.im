@@ -4,6 +4,73 @@ title:  "Postgres Ordering Data Type - A Failed Experiment"
 date:   2023-05-17 17:50:08 -0700
 categories: Postgres, Data type, experiment
 ---
+<!-- ChatGPT rephrased the blog as follows. The prompt was:
+
+Rephrase the following blog post:
+
+Postgres Ordering Data Type - A Failed Experiment
+
+<rest of the body of the post, as copied from the rendered webpage, followed it.>
+
+-->
+
+<!-- hiding the proposed title, since I like mine better.
+Failed Experiment: Postgres Data Type for Ordering Data
+
+Other changes made after copying from ChatGPT's response:
+
+Used `` to make some text look like code.
+
+Reintroduced the hyperlinks.
+-->
+
+I am sharing this unsuccessful experiment to embrace the spirit of acknowledging
+and learning from our [failed attempts][]. In a [feature request][] discussion on
+HackerNews, a user named danielheath proposed the idea of a Postgres data type
+that would allow assigning a specific position to an item/row in a table. The
+expectation was that Postgres would automatically adjust the positions of other
+items in the list to accommodate the assigned position.
+
+[failed attempts]: https://en.wikipedia.org/wiki/Michelson%E2%80%93Morley_experiment
+[feature request]: https://news.ycombinator.com/item?id=34565332
+
+An example scenario presented was managing a playlist, where a user wants to
+move a song to a particular position, such as position 3. This feature would
+relieve the programmer from the burden of manually rearranging the list and
+allow assigning the desired position directly. When retrieving the results, the
+item should appear at the assigned position.
+
+Although several [solutions][] were proposed at the time, it was unclear if any of
+them met the exact requirements of the request. I pondered over possible
+implementations and eventually devised a method that I believed could achieve
+the desired outcome. Motivated by this, I decided to code the solution using
+plain SQL over the weekend, hoping that if successful, I could propose it as a
+feature for inclusion in the Postgres project.
+
+[solutions]: https://news.ycombinator.com/item?id=34565522
+
+Below, you can find the code for the solution I developed. The fundamental idea
+was to dynamically assign positions at runtime. When an update request arrived,
+I used the requested position along with the current timestamp to assign a value
+for sorting the results.
+
+Initially, the solution seemed to work, but its limitations soon became
+apparent. Towards the end, you can observe that the solution fails to set the
+position of 'Song B' to 3 under certain conditions. The problem with this
+approach, as well as any other potential solutions, is that we require a sorted
+list of elements before we can place an item at a desired position. In an
+attempt to address this, I partially implemented the `set_song_position_v2()`
+function. However, even if this function were complete and handled all possible
+edge cases, it would not fulfill the requested feature. A proper solution
+necessitates working with a pre-sorted list, which contradicts the essence of
+the feature request—to easily assign the desired position without additional
+effort.
+
+In simpler terms, this issue is analogous to trying to obtain the max() value of
+a column without maintaining an index containing all the rows.
+
+<!-- The original text of the post follows, as I published it before rephrasing with
+ChatGPT's help.
 
 I'm publishing this failed experiment in the spirit of the [most famous failed
 experiment][]. We should be more open about our failed attempts.
@@ -54,6 +121,8 @@ work.
 
 To state simply, it's the same problem as trying to get the `max()` value of a
 column without trying to maintain an index that contains all the rows.
+
+-->
 
 ```sql
 /*
