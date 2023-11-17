@@ -5,8 +5,6 @@ the blog posts.
 
 [gurjeet]: gurjeet.singh.im
 
-[![ko-fi](./images/donate.svg)](https://ko-fi.com/gurjeet)
-
 Blog
 ====
 
