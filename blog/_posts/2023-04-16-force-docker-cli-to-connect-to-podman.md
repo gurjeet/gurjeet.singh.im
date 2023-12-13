@@ -17,13 +17,21 @@ communication channel as a Unix Domain Socket. So you can set the `DOCKER_HOST`
 environment variable to point to Podman server's socket, and the Doccker CLI
 utiliies will all work with Podman.
 
+{% comment %}
+Use 'raw' tag to prevent Jekyll from consuming the format string as a Liquid
+variable. It does so because the format string is surrounded by {{ and }}.
+{% endcomment %}
+
+{% raw %}
 ```shell
 export DOCKER_HOST="unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
 ```
+{% endraw %}
 
 Rather than remembering that incantation, I turned it into a Bash function with
 an easy-to-remember name, and some helpful diagnostics.
 
+{% raw %}
 ```shell
 function docker_set_host_to_podman_socket()
 {
@@ -33,3 +41,4 @@ function docker_set_host_to_podman_socket()
     export DOCKER_HOST="$unix_domain_socket"
 }
 ```
+{% endraw %}
