@@ -10,3 +10,11 @@ of the resume.
 
     soffice --convert-to pdf GurjeetResume.odt
 
+If you install `odt2txt`, then you can use `git diff` command to see the edits
+made in the above file. Just add the following section to `~/.gitconfig`.
+
+```
+[diff "odf"]
+        binary = true
+        textconv = odt2txt
+```
