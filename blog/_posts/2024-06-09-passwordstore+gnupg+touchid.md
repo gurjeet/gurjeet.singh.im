@@ -56,6 +56,13 @@ the encrypted passwords can be managed in, and shared using [Git][].
 Hopefully the below instructions and explanation will make it convenient for
 you to make use of GPG and PasswordStore.
 
+***Update*** (2024/06/13):
+I now use this setup to automatically reconnect my VPN connection, if it ever
+gets disconnected. Please see this blog [post][] for the shell functions I wrote
+for this automation.
+
+[post]: ./cisco-anyconnect-vpn-automation-with-touchid-on-macos
+
 ```shell
 # Install the packages using Homebrew
 brew install gnupg
