@@ -5,8 +5,8 @@ date:   2024-06-09 13:33:22 -0700
 categories: pass, password store, touchid, VPN, encryption
 ---
 
-Local, Git-managed, GPG-protected, TouchID-enabled Password Management
-======================================================================
+Local, Secure, Convenient, Shareable Password Management with GPG, Git, and TouchID
+===================================================================================
 
 Open Source security tools abound, but common people don't use them becuase
 these tools cause inconvenience. If you give an average person a choice between
@@ -26,11 +26,11 @@ protect those passwords with a GPG key. And to make it all extremely convenient
 to use, the password used to protect the GPG private key is protected by a mere
 touch of TouchID, so you won't have to tediously type your long passwords.
 
-Below I will show how to use [PasswordStore][] [CLI][] to securely store all
-your passwords locally, and protect them with TouchID. In essence, your TouchID
-will protect the GPG key passwords stored in the macOS login Keychain, which in
-turn will protect the GPG private key, which in turn will protect the passwords
-stored in PasswordStore.
+Below I will show how to use [PasswordStore][] [CLI][] (a.k.a `pass`) to
+securely store all your passwords locally, and protect them with TouchID. In
+essence, your TouchID will protect the GPG key passwords (stored in the macOS
+login Keychain), which in turn will protect the GPG private key, which in turn
+will protect the passwords stored in PasswordStore.
 
 [PasswordStore]: https://www.passwordstore.org/
 [CLI]: https://en.wikipedia.org/wiki/Command-line_interface
@@ -48,8 +48,8 @@ use.
 
 With the implementation shown below, now whenever my scripts want to access the
 VPN password, or any other secret stored in my PasswordStore, I get prompted
-with the TouchID to unlock their access. As an added bonus, the encrypted
-passwords can be managed in, and shared via [Git][].
+with the TouchID to unlock their access. As an added bonus, if you choose to,
+the encrypted passwords can be managed in, and shared using [Git][].
 
 [Git]: https://git-scm.com/
 
@@ -193,12 +193,12 @@ gpg-connect-agent reloadagent /bye
 # `pinentry-touchid`.
 pass show VPNpassword
 
-# Since this was just for verification purposes, delete the `VPNpassword`.
+# Since this was just for demo purposes, delete the `VPNpassword`.
 pass rm VPNpassword
 
 # In essence, now your TouchID protects the GPG key passwords stored in the
 # macOS login Keychain, which in turn protect the GPG private keys, which in
-# turn protect the passwords sotred in PasswordStore.
+# turn protect the passwords stored in PasswordStore.
 
 # If you performed the optional `pass git init` command shown above, all changes
 # to the PasswordStore are now tracked in Git. This Git repository can now be
