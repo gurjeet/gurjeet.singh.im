@@ -19,7 +19,7 @@ Ideally you should first create a new draft, work on it, commit it etc. but not
 publish it until it's finished.
 
 To create a new draft, use the following command. It creates a new template file
-under `blob/_drafts` directory.
+under `blog/_drafts` directory.
 
     ./create_draft.sh "New Post Title"
 
